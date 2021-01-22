@@ -1,0 +1,4 @@
+server:
+  affinity: ""
+  dev:
+    enabled: true
