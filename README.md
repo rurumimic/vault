@@ -2,7 +2,7 @@
 
 - HashiCorp: [Vault](https://www.vaultproject.io/)
   - [Learn](https://learn.hashicorp.com/vault)
-    1. [Install](https://learn.hashicorp.com/tutorials/vault/getting-started-install?in=vault/getting-started)
+    - [Install](https://learn.hashicorp.com/tutorials/vault/getting-started-install?in=vault/getting-started)
   - [Documentation](https://www.vaultproject.io/docs)
 
 ## Prerequisites
@@ -10,23 +10,19 @@
 - Helm 3.0+
 - Kubernetes 1.9+
 
-## Contents
+## AWS EKS + Vault
 
-- [x] [Install](install/README.md)
-- [ ] Kubernetes
-  - [x] [Local Helm](local-helm/README.md)
-  - [x] [Injecting Secrets](local-helm-sidecar/README.md) via Local Helm Sidecar
-  - [x] [Kubernets + External Vault](external-vault/README.md)
-  - [ ] [as a Cert Manager](cert-manager/README.md)
-- [ ] HA
-- [ ] TLS
-- [ ] PGP
-- [ ] Access
-  - [ ] Authentication Methods
-    - [ ] GitHub
-  - [ ] Entities
-  - [ ] Groups
-  - [ ] Leases
-- [ ] ACL Policy
-- [ ] Storage
-- [ ] Secrets Engine
+[Quick Start](aws/README.md)
+
+1. Packer: AMI
+1. Resources: Subnets, Route, Load Balancer, Target Group, Route 53
+1. Terraform: EC2
+1. Vault: Start a server
+1. Kubernetes: Deploy Service with externalName
+1. Vault Authentication: with AWS IAM
+1. Vault + Kubernetes: Vault Injector
+1. Example: Inject Vault Token
+
+### Architecture
+
+![](./aws/images/resources.png)

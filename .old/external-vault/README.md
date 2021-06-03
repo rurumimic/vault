@@ -264,7 +264,7 @@ in node 2:
 
 ```bash
 helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install vault hashicorp/vault --set "injector.externalVaultAddr=http://external-vault:8200"
+helm install vault hashicorp/vault --set "injector.externalVaultAddr=http://external-vault"
 ```
 
 ```bash

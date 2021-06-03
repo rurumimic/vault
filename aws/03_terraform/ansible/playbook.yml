@@ -1,0 +1,17 @@
+---
+- hosts: vault
+  tasks:
+    - name: Configure Vault
+      become: yes
+      copy:
+        src: "{{ inventory_hostname }}.hcl"
+        dest: /etc/vault.d/vault.hcl
+        owner: vault
+        group: vault
+        mode: 0640
+    - name: Start Vault
+      become: yes
+      systemd:
+        name: vault
+        state: started
+        enabled: yes

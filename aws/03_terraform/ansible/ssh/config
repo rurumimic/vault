@@ -1,0 +1,10 @@
+Host bastion
+  User ec2-user
+  HostName xxx.xxx.xxx.xxx
+  Port 22
+  IdentityFile ~/.ssh/bastion.pem
+Host xxx.xxx.xxx.xxx
+  User ubuntu
+  Port 22
+  IdentityFile ~/.ssh/vault.pem
+  ProxyCommand ssh -W %h:%p ec2-user@xxx.xxx.xxx.xxx

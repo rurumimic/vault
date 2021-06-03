@@ -1,0 +1,11 @@
+Host bastion
+  User ${bastion_user}
+  HostName ${bastion_ip}
+  Port 22
+  IdentityFile ${bastion_private_key}
+
+Host $${VAULT_IP[i]}
+  User ${user}
+  Port 22
+  IdentityFile ${private_key}
+  ProxyCommand ssh -W %h:%p ${bastion_user}@${bastion_ip}

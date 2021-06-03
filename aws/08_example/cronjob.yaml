@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: token-manager
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: token-manager
+  namespace: token-manager
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts
+  namespace: token-manager
+data:
+  requirements.txt: |
+    boto3==1.17.78
+    botocore==1.20.78
+    certifi==2020.12.5
+    chardet==4.0.0
+    hvac==0.10.14
+    idna==2.10
+    jmespath==0.10.0
+    python-dateutil==2.8.1
+    python-decouple==3.4
+    requests==2.25.1
+    s3transfer==0.4.2
+    six==1.16.0
+    urllib3==1.26.4
+  job.py: |
+    import hvac
+    from decouple import config
+    from pprint import pprint
+
+    VAULT_ADDR = config('VAULT_ADDR')
+    VAULT_TOKEN = open('/vault/secrets/token', 'r').read()
+
+    if __name__ == '__main__':
+      client = hvac.Client(url=VAULT_ADDR, token=VAULT_TOKEN)
+
+      response = client.secrets.kv.v2.read_secret_version(
+        mount_point='secret',
+        path='apple',
+      )
+
+      print('secret/apple')
+      pprint(response['data']['data'])
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob
+  namespace: token-manager
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            vault.hashicorp.com/agent-inject: "true"
+            vault.hashicorp.com/agent-inject-token: "true" # token in /vault/secrets/token
+            vault.hashicorp.com/agent-pre-populate-only: "true" # donot create sidecar container
+            vault.hashicorp.com/role: "token-manager" # The pod requests the policy of the role token-manager.
+        spec:
+          serviceAccountName: token-manager
+          restartPolicy: OnFailure
+          containers:
+          - name: job
+            image: python:3-alpine
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/sh", "-c"]
+            args: ["pip install -r /workspace/requirements.txt && python /workspace/job.py"]
+            env:
+              - name: VAULT_ADDR
+                value: "https://vault.example.com"
+            volumeMounts:
+              - name: scripts
+                mountPath: /workspace
+                readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: scripts

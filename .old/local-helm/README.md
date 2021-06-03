@@ -6,8 +6,6 @@
   - [consul](https://artifacthub.io/packages/helm/hashicorp/consul)
   - [vault](https://artifacthub.io/packages/helm/hashicorp/vault)
 
-
-
 ```bash
 helm repo add hashicorp https://helm.releases.hashicorp.com
 ```
