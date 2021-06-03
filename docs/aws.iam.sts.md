@@ -273,7 +273,7 @@ Temporarily grant a role that can read files in the S3 bucket.
 - Credential type: `Assumed Role`
 - Role ARNs: `arn:aws:iam::xxxxxxxxxxxx:role/VaultS3ReaderRole`
 
-#### Credential 생성
+#### Credential
 
 - TTL: 15m ~ 1h
   - DurationSeconds: 900s ~ 3600s
