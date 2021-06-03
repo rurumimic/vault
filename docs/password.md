@@ -4,8 +4,6 @@
 
 ## Vault VM
 
-Vault 관리자로 로그인한다.
-
 ```bash
 export VAULT_ADDR="https://vault"
 export VAULT_TOKEN="Root Token"
