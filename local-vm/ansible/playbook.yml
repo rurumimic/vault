@@ -1,0 +1,73 @@
+---
+- hosts: all
+  environment:
+    VAULT_ADDR: 'http://127.0.0.1:8200'
+  tasks:
+    - name: Add the HashiCorp GPG key
+      become: yes
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        validate_certs: no
+    - name: Linux distribution
+      shell: lsb_release -cs
+      register: lsb_release
+    - name: Add the official HashiCorp Linux repository
+      become: yes
+      apt_repository:
+        repo: deb [arch=amd64] https://apt.releases.hashicorp.com {{ lsb_release.stdout }} main
+    - name: Install Vault
+      become: yes
+      apt:
+        name: vault
+        state: present
+        update_cache: yes
+    - name: Create a plugin directory
+      become: yes
+      file:
+        path: /opt/vault/plugins
+        state: directory
+        recurse: yes
+        owner: vault
+        group: vault
+    - name: Configure systemd
+      become: yes
+      copy:
+        src: vault.service
+        dest: /etc/systemd/system/vault.service
+        owner: root
+        group: root
+        mode: 0644
+    - name: Configure Vault
+      become: yes
+      copy:
+        src: vault.hcl
+        dest: /etc/vault.d/vault.hcl
+        owner: vault
+        group: vault
+        mode: 0640
+    - name: Start Vault
+      become: yes
+      systemd:
+        name: vault
+        state: started
+        enabled: yes
+    - name: Check initialization
+      stat:
+        path: /home/vagrant/vault.keys.json
+      register: vault_keys
+    - name: Init Vault
+      shell: vault operator init -key-shares=1 -key-threshold=1 -format=json > cluster-keys.json
+      when: vault_keys.stat.exists == False
+    - name: Change mode of key file
+      file:
+        path: /home/vagrant/vault.keys.json
+        mode: '0600'
+#################################################################################
+########################## Unsafe tasks for developers ##########################
+#################################################################################
+    - name: Read Vault Keys
+      shell: cat /home/vagrant/vault.keys.json
+      register: vault_keys
+    - name: Display Vault Keys
+      debug:
+        msg: "{{ vault_keys.stdout }}"
