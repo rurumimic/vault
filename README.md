@@ -34,8 +34,8 @@
 1. [Terraform](aws/03_terraform/README.md): EC2
 1. [Vault](aws/04_vault/README.md): Start a server
 1. [Kubernetes](aws/05_kubernetes/vault.yaml): Deploy Service with externalName
-1. [Vault Authenticationaws/](06_admin/README.md): with AWS IAM
-1. [Vault +aws/ Kubernetes](07_vault-injector/README.md): Vault Injector
+1. [Vault Authenticationaws/](aws/06_admin/README.md): with AWS IAM
+1. [Vault +aws/ Kubernetes](aws/07_vault-injector/README.md): Vault Injector
 1. [Example](aws/08_example/README.md): Inject Vault Token
 
 ### Architecture
